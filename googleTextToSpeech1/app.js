@@ -3,6 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const { spawn, exec } = require('child_process');
+const nodeCmd = require('node-cmd');
 
 // Imports Google Cloud client library for TTS
 const textToSpeech = require('@google-cloud/text-to-speech');
@@ -37,7 +39,7 @@ app.post("/hook", (req, res) => {
 })
 
 app.post("/synth", (req, res) => {
-  console.log(req.body) // Call your action on the request here
+  //console.log(req.body) // Call your action on the request here
   var text = req.body.text;
   var ssml = req.body.ssml;
   var language = req.body.language;
@@ -61,6 +63,19 @@ app.post("/synth", (req, res) => {
   // generate audio
   var outputFile = req.body.outputFile ? req.body.outputFile : 'output.mp3';
   audio(input, voice, audioConfig, outputFile);
+  nodeCmd.get('vlc --one-instance new.mp3', (err, data, stderr) => console.log(data, err, stderr));
+  // const vlc = spawn('cmd.exe', ['vlc', '--one-instance', outputFile]);
+  // vlc.stdout.on('data', (data) => {
+  //   console.log(`stdout: ${data}`);
+  // });
+
+  // vlc.stderr.on('data', (data) => {
+  //   console.error(`stderr: ${data}`);
+  // });
+
+  // vlc.on('close', (code) => {
+  //   console.log(`child process exited with code ${code}`);
+  // });
   res.status(200).end() // Responding is important
 })
 
