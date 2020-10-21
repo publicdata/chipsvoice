@@ -1,2 +1,4 @@
 *.mp3
+*.ogg
 !googleTextToSpeech1/*.mp3
+!googleTextToSpeech1/*.ogg
