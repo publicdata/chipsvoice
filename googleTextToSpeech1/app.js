@@ -41,19 +41,19 @@ app.post("/hook", (req, res) => {
 app.post("/synth", (req, res) => {
   var text = req.body.text;
   var language = req.body.language;
+  var gender = req.body.gender;
   var voiceName = req.body.voiceName;
-  var voice = {languageCode: language, name: voiceName};
+  var voice = {languageCode: language, name: voiceName, ssmlGender: gender};
   audioFromText(text, voice);
-  audioFromSSML(ssml, voice);
   res.status(200).end() // Responding is important
 })
 
 app.post("/synthSSML", (req, res) => {
   var ssml = req.body.ssml;
   var language = req.body.language;
+  var gender = req.body.gender;
   var voiceName = req.body.voiceName;
-  var voice = {languageCode: language, name: voiceName};
-  quickStart();
+  var voice = {languageCode: language, name: voiceName, ssmlGender: gender};
   audioFromSSML(ssml, voice);
   res.status(200).end() // Responding is important
 })
@@ -86,18 +86,15 @@ async function audioFromSSML(ssml, voice) {
   const [response] = await client.synthesizeSpeech(request);
   const writeFile = util.promisify(fs.writeFile);
   await writeFile(outputFile, response.audioContent, 'binary');
-  console.log(`Audio content written to file: ${outputFile}`);
+  console.log(`Audio content from SSML written to file: ${outputFile}`);
 }
 
-async function quickStart() {
-  // The text to synthesize
-  const text = 'hello, world!';
-
+async function audioFromText(text, voice) {
   // Construct the request
   const request = {
     input: {text: text},
     // Select the language and SSML voice gender (optional)
-    voice: {languageCode: 'en-US', ssmlGender: 'NEUTRAL'},
+    voice: voice,
     // select the type of audio encoding
     audioConfig: {audioEncoding: 'MP3'},
   };
@@ -106,8 +103,8 @@ async function quickStart() {
   const [response] = await client.synthesizeSpeech(request);
   // Write the binary audio content to a local file
   const writeFile = util.promisify(fs.writeFile);
-  await writeFile('output.mp3', response.audioContent, 'binary');
-  console.log('Audio content written to file: output.mp3');
+  await writeFile(outputFile, response.audioContent, 'binary');
+  console.log(`Audio content from text written to file: ${outputFile}`);
 }
 
 module.exports = app;
