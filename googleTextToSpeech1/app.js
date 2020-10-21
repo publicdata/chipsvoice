@@ -39,27 +39,30 @@ app.post("/hook", (req, res) => {
 })
 
 app.post("/synth", (req, res) => {
+  console.log(req.body) // Call your action on the request here
   var text = req.body.text;
-  var language = req.body.language;
-  var gender = req.body.gender;
-  var voiceName = req.body.voiceName;
-  var voice = {languageCode: language, name: voiceName, ssmlGender: gender};
-  var audioConfig = {audioEncoding: 'MP3'};
-  audio({text: text}, voice, audioConfig);
-  res.status(200).end() // Responding is important
-})
-
-app.post("/synthSSML", (req, res) => {
   var ssml = req.body.ssml;
   var language = req.body.language;
   var gender = req.body.gender;
   var voiceName = req.body.voiceName;
   var voice = {languageCode: language, name: voiceName, ssmlGender: gender};
-  var audioConfig = {audioEncoding: 'MP3'};
-  audio({ssml: ssml}, voice, audioConfig);
+  var format = 'MP3';
+  var rate = 1.0;
+  var pitch = 1.0;
+  var gain = 3.0;
+  var audioConfig = {
+    "audioEncoding": format,
+    "speakingRate": rate,
+    "pitch": pitch,
+    "volumeGainDb": gain,
+  };
+  // TODO: text fallback on SSML error if both present
+  var input;
+  if (!!ssml) input = {ssml: ssml};
+  else input = {text: text};
+  audio(input, voice, audioConfig);
   res.status(200).end() // Responding is important
 })
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
