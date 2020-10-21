@@ -12,6 +12,9 @@ const util = require('util');
 // Creates a client
 const client = new textToSpeech.TextToSpeechClient();
 
+const ssml = '<speak>Hello world!</speak>';
+const outputFile = 'outputSSML.mp3';
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -38,7 +41,9 @@ app.post("/hook", (req, res) => {
 
 app.post("/synth", (req, res) => {
   console.log(req.body) // Call your action on the request here
+  var  req.body.name
   quickStart();
+  audioFromSSML();
   res.status(200).end() // Responding is important
 })
 
@@ -59,6 +64,19 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+async function audioFromSSML() {
+  const request = {
+    input: {ssml: ssml},
+    voice: {languageCode: 'en-US', ssmlGender: 'FEMALE'},
+    audioConfig: {audioEncoding: 'MP3'},
+  };
+
+  const [response] = await client.synthesizeSpeech(request);
+  const writeFile = util.promisify(fs.writeFile);
+  await writeFile(outputFile, response.audioContent, 'binary');
+  console.log(`Audio content written to file: ${outputFile}`);
+}
 
 async function quickStart() {
   // The text to synthesize
