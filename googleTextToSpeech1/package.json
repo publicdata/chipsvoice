@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
-    "setpath": "export GOOGLE_APPLICATION_CREDENTIALS='tts-creds.json'",
+    "setpath": "export GOOGLE_APPLICATION_CREDENTIALS='ccrn-site-ede8a5074d2e.json'",
     "serverstart": "DEBUG=express-locallibrary-tutorial:* npm run devstart",
     "dev": "npm run setpath && npm run serverstart"
   },
