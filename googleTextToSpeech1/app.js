@@ -12,7 +12,6 @@ const util = require('util');
 // Creates a client
 const client = new textToSpeech.TextToSpeechClient();
 
-const ssml = '<speak>Hello world!</speak>';
 const outputFile = 'outputSSML.mp3';
 
 var indexRouter = require('./routes/index');
@@ -41,9 +40,9 @@ app.post("/hook", (req, res) => {
 
 app.post("/synth", (req, res) => {
   console.log(req.body) // Call your action on the request here
-  var  req.body.name
+  var ssml = req.body.ssml;
   quickStart();
-  audioFromSSML();
+  audioFromSSML(ssml);
   res.status(200).end() // Responding is important
 })
 
@@ -65,7 +64,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-async function audioFromSSML() {
+async function audioFromSSML(ssml) {
   const request = {
     input: {ssml: ssml},
     voice: {languageCode: 'en-US', ssmlGender: 'FEMALE'},
