@@ -12,8 +12,6 @@ const util = require('util');
 // Creates a client
 const client = new textToSpeech.TextToSpeechClient();
 
-const outputFile = 'outputSSML.mp3';
-
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -60,7 +58,9 @@ app.post("/synth", (req, res) => {
   var input;
   if (!!ssml) input = {ssml: ssml};
   else input = {text: text};
-  audio(input, voice, audioConfig);
+  // generate audio
+  var outputFile = req.body.outputFile ? req.body.outputFile : 'output.mp3';
+  audio(input, voice, audioConfig, outputFile);
   res.status(200).end() // Responding is important
 })
 
@@ -81,7 +81,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-async function audio(input, voice, audioConfig) {
+async function audio(input, voice, audioConfig, outputFile) {
   const request = {
     input: input,
     voice: voice,
