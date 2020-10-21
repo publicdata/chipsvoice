@@ -39,10 +39,22 @@ app.post("/hook", (req, res) => {
 })
 
 app.post("/synth", (req, res) => {
-  console.log(req.body) // Call your action on the request here
+  var text = req.body.text;
+  var language = req.body.language;
+  var voiceName = req.body.voiceName;
+  var voice = {languageCode: language, name: voiceName};
+  audioFromText(text, voice);
+  audioFromSSML(ssml, voice);
+  res.status(200).end() // Responding is important
+})
+
+app.post("/synthSSML", (req, res) => {
   var ssml = req.body.ssml;
+  var language = req.body.language;
+  var voiceName = req.body.voiceName;
+  var voice = {languageCode: language, name: voiceName};
   quickStart();
-  audioFromSSML(ssml);
+  audioFromSSML(ssml, voice);
   res.status(200).end() // Responding is important
 })
 
@@ -64,10 +76,10 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-async function audioFromSSML(ssml) {
+async function audioFromSSML(ssml, voice) {
   const request = {
     input: {ssml: ssml},
-    voice: {languageCode: 'en-US', ssmlGender: 'FEMALE'},
+    voice: voice,
     audioConfig: {audioEncoding: 'MP3'},
   };
 
