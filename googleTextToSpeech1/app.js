@@ -46,10 +46,10 @@ app.post("/synth", (req, res) => {
   var gender = req.body.gender;
   var voiceName = req.body.voiceName;
   var voice = {languageCode: language, name: voiceName, ssmlGender: gender};
-  var format = 'MP3';
-  var rate = 1.0;
-  var pitch = 1.0;
-  var gain = 3.0;
+  var format = req.body.format ? req.body.format : 'MP3';
+  var rate = req.body.rate ? req.body.rate : 1.0;
+  var pitch = req.body.pitch ? req.body.pitch : 1.0;
+  var gain = req.body.gain ? req.body.gain : 3.0;
   var audioConfig = {
     "audioEncoding": format,
     "speakingRate": rate,
