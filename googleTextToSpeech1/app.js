@@ -64,7 +64,7 @@ app.post("/synth", async (req, res) => {
   await audio(input, voice, audioConfig, outputFile);
 })
 
-app.post("/synthNSpeak", async (req, res) => {
+app.post("/speak", async (req, res) => {
   //console.log(req.body) // Call your action on the request here
   var text = req.body.text;
   var ssml = req.body.ssml;
