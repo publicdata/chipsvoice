@@ -4,7 +4,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const { spawn, exec } = require('child_process');
-const nodeCmd = require('node-cmd');
 
 // Imports Google Cloud client library for TTS
 const textToSpeech = require('@google-cloud/text-to-speech');
@@ -38,7 +37,7 @@ app.post("/hook", (req, res) => {
   res.status(200).end() // Responding is important
 })
 
-app.post("/synth", (req, res) => {
+app.post("/synth", async (req, res) => {
   //console.log(req.body) // Call your action on the request here
   var text = req.body.text;
   var ssml = req.body.ssml;
@@ -62,20 +61,46 @@ app.post("/synth", (req, res) => {
   else input = {text: text};
   // generate audio
   var outputFile = req.body.outputFile ? req.body.outputFile : 'output.mp3';
-  audio(input, voice, audioConfig, outputFile);
-  nodeCmd.get('vlc --one-instance new.mp3', (err, data, stderr) => console.log(data, err, stderr));
-  // const vlc = spawn('cmd.exe', ['vlc', '--one-instance', outputFile]);
-  // vlc.stdout.on('data', (data) => {
-  //   console.log(`stdout: ${data}`);
-  // });
+  await audio(input, voice, audioConfig, outputFile);
+})
 
-  // vlc.stderr.on('data', (data) => {
-  //   console.error(`stderr: ${data}`);
-  // });
+app.post("/synthNSpeak", async (req, res) => {
+  //console.log(req.body) // Call your action on the request here
+  var text = req.body.text;
+  var ssml = req.body.ssml;
+  var language = req.body.language;
+  var gender = req.body.gender;
+  var voiceName = req.body.voiceName;
+  var voice = {languageCode: language, name: voiceName, ssmlGender: gender};
+  var format = req.body.format ? req.body.format : 'MP3';
+  var rate = req.body.rate ? req.body.rate : 1.0;
+  var pitch = req.body.pitch ? req.body.pitch : 1.0;
+  var gain = req.body.gain ? req.body.gain : 3.0;
+  var audioConfig = {
+    "audioEncoding": format,
+    "speakingRate": rate,
+    "pitch": pitch,
+    "volumeGainDb": gain,
+  };
+  // TODO: text fallback on SSML error if both present
+  var input;
+  if (!!ssml) input = {ssml: ssml};
+  else input = {text: text};
+  // generate audio
+  var outputFile = req.body.outputFile ? req.body.outputFile : 'output.mp3';
+  await audio(input, voice, audioConfig, outputFile);
+  const vlc = exec(`vlc --one-instance ${outputFile}`);
+  vlc.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+  });
 
-  // vlc.on('close', (code) => {
-  //   console.log(`child process exited with code ${code}`);
-  // });
+  vlc.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+  });
+
+  vlc.on('close', (code) => {
+    console.log(`child process exited with code ${code}`);
+  });
   res.status(200).end() // Responding is important
 })
 

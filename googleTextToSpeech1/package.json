@@ -7,7 +7,7 @@
     "devstart": "nodemon ./bin/www",
     "setpath": "export GOOGLE_APPLICATION_CREDENTIALS='ccrn-site-ede8a5074d2e.json'",
     "serverstart": "DEBUG=express-locallibrary-tutorial:* npm run devstart",
-    "dev": "npm run setpath && npm run serverstart"
+    "dev": "npm run devstart"
   },
   "dependencies": {
     "@google-cloud/text-to-speech": "^3.1.1",
@@ -16,7 +16,6 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
-    "node-cmd": "^3.0.0",
     "pug": "2.0.0-beta11"
   },
   "devDependencies": {
