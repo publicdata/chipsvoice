@@ -104,6 +104,22 @@ app.post("/speak", async (req, res) => {
   res.status(200).end() // Responding is important
 })
 
+app.post("/play", async (req, res) => {
+  //console.log(req.body) // Call your action on the request here
+  var file = req.body.file;
+  const vlc = exec(`vlc --one-instance ${file}`);
+  vlc.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+  });
+  vlc.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+  });
+  vlc.on('close', (code) => {
+    console.log(`child process exited with code ${code}`);
+  });
+  res.status(200).end() // Responding is important
+})
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
