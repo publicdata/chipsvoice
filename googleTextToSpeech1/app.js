@@ -44,7 +44,8 @@ app.post("/synth", (req, res) => {
   var gender = req.body.gender;
   var voiceName = req.body.voiceName;
   var voice = {languageCode: language, name: voiceName, ssmlGender: gender};
-  audioFromText(text, voice);
+  var audioConfig = {audioEncoding: 'MP3'};
+  audio({text: text}, voice, audioConfig);
   res.status(200).end() // Responding is important
 })
 
@@ -54,7 +55,8 @@ app.post("/synthSSML", (req, res) => {
   var gender = req.body.gender;
   var voiceName = req.body.voiceName;
   var voice = {languageCode: language, name: voiceName, ssmlGender: gender};
-  audioFromSSML(ssml, voice);
+  var audioConfig = {audioEncoding: 'MP3'};
+  audio({ssml: ssml}, voice, audioConfig);
   res.status(200).end() // Responding is important
 })
 
@@ -76,35 +78,17 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-async function audioFromSSML(ssml, voice) {
+async function audio(input, voice, audioConfig) {
   const request = {
-    input: {ssml: ssml},
+    input: input,
     voice: voice,
-    audioConfig: {audioEncoding: 'MP3'},
+    audioConfig: audioConfig,
   };
 
   const [response] = await client.synthesizeSpeech(request);
   const writeFile = util.promisify(fs.writeFile);
   await writeFile(outputFile, response.audioContent, 'binary');
-  console.log(`Audio content from SSML written to file: ${outputFile}`);
-}
-
-async function audioFromText(text, voice) {
-  // Construct the request
-  const request = {
-    input: {text: text},
-    // Select the language and SSML voice gender (optional)
-    voice: voice,
-    // select the type of audio encoding
-    audioConfig: {audioEncoding: 'MP3'},
-  };
-
-  // Performs the text-to-speech request
-  const [response] = await client.synthesizeSpeech(request);
-  // Write the binary audio content to a local file
-  const writeFile = util.promisify(fs.writeFile);
-  await writeFile(outputFile, response.audioContent, 'binary');
-  console.log(`Audio content from text written to file: ${outputFile}`);
+  console.log(`Audio content written to file: ${outputFile}`);
 }
 
 module.exports = app;
