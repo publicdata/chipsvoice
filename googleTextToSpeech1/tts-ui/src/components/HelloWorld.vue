@@ -10,10 +10,11 @@
             v-switch(v-model="ssmlMode" label="SSML Mode")
             v-textarea(v-if="ssmlMode" label="SSML" v-model="ssml" required) 
             v-textarea(v-else label="Text" v-model="text" required) 
+            v-switch(v-model="voiceMode" label="Specific Voice")
             .voice-options
               v-select(label="Voice" v-model="voice" :items="voices")
+              v-select( label="Language" v-model="language" :items="languages")
               v-select(label="Gender" v-model="gender" :items="genders")
-              v-select(label="Language" v-model="language" :items="languages")
             v-btn(@click="speak") Speak
 </template>
 
@@ -24,14 +25,24 @@
     name: 'HelloWorld',
 
     data: () => ({
-      file: "",
+      file: "new.ogg",
       format: "OGG_OPUS",
       formats: ["OGG_OPUS", "MP3", "LINEAR16"],
       gender: "MALE",
       genders: ["MALE", "FEMALE", "NEUTRAL"],
-      text: "",
-      ssml: "<speak></speak>",
+      text: "Hello world",
+      ssml: "<speak>Hello world</speak>",
       ssmlMode: false,
+      language: "en-US",
+      languages: [
+        "en-US",
+        "en-GB",
+        "en-AU",
+        "en-IN",
+        "es-ES",
+      ],
+      voiceMode: true,
+      voice: "en-US-Wavenet-A",
       voices: [
         "en-US-Wavenet-A",
         "en-US-Wavenet-B",
@@ -43,15 +54,20 @@
         "en-US-Wavenet-H",
         "en-US-Wavenet-I",
         "en-US-Wavenet-J",
-      ],
-      voice: "en-US-Wavenet-A",
-      language: "en-US",
-      languages: [
-        "en-US",
-        "en-GB",
-        "en-AU",
-        "en-IN",
-        "es-ES",
+        "en-GB-Wavenet-A",
+        "en-GB-Wavenet-B",
+        "en-GB-Wavenet-C",
+        "en-GB-Wavenet-D",
+        "en-GB-Wavenet-F",
+        "en-AU-Wavenet-A",
+        "en-AU-Wavenet-B",
+        "en-AU-Wavenet-C",
+        "en-AU-Wavenet-D",
+        "en-IN-Wavenet-A",
+        "en-IN-Wavenet-B",
+        "en-IN-Wavenet-C",
+        "en-IN-Wavenet-D",
+        "es-ES-Standard-A",
       ],
     }),
 
@@ -59,14 +75,14 @@
       speak() {
         // make POST request
         const baseURI = 'http://localhost:3000/speak';
+        let input = this.ssmlMode ? {ssml: this.ssml} : {text: this.text};
+        let voice = this.voiceMode ? {voiceName: this.voiceName} : {language: this.language, gender: this.gender};
+        let audio = {};
         let payload = {
           outputFile: this.file,
-          text: this.text,
-          ssml: this.ssml,
-          ssmlMode: this.ssmlMode,
-          language: this.language,
-          voiceName: this.voice,
-          gender: this.gender,
+          ...input,
+          ...voice,
+          ...audio,
         };
         
         this.$http.post(baseURI, payload)
