@@ -77,12 +77,13 @@
       speak() {
         // make POST request
         const baseURI = 'http://localhost:3000/speak';
-        let input = this.ssmlMode ? {ssml: this.ssml} : {text: this.text};
         let voice = this.voiceMode ? {voiceName: this.voiceName} : {language: this.language, gender: this.gender};
         let audio = {};
         let payload = {
           outputFile: this.file,
-          ...input,
+          ssml: this.ssml,
+          text: this.text,
+          ssmlMode: this.ssmlMode,
           ...voice,
           ...audio,
         };
