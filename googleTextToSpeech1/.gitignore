@@ -4,5 +4,6 @@ npm-debug.log
 .env
 .DS_Store
 ccrn-site-ede8a5074d2e.json
+tts-creds.json
 *.mp3
 *.ogg
