@@ -65,9 +65,10 @@ app.post("/speak", async (req, res) => {
   console.log(req.body) // Call your action on the request here
   var voice = {
     languageCode: req.body.language ? req.body.language : 'en-US',
-    name: req.body.voiceName ? req.body.voiceName : (!req.body.language || !req.body.gender) ? "en-US-Wavenet-A" : "",
+    name: req.body.voiceMode ? req.body.voice : (!req.body.language || !req.body.gender) ? "en-US-Wavenet-A" : "",
     ssmlGender: req.body.gender ? req.body.gender : "NEUTRAL"
   };
+  console.log(voice.name)
   var audioConfig = {
     "audioEncoding": req.body.format ? req.body.format : 'OGG_OPUS',
     "speakingRate": req.body.rate ? req.body.rate : 1.0,

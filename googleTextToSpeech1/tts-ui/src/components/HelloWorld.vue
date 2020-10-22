@@ -83,7 +83,9 @@
       speak() {
         // make POST request
         const baseURI = 'http://localhost:3000/speak';
-        let voice = this.voiceMode ? {voiceName: this.voiceName} : {language: this.language, gender: this.gender};
+        let voice = this.voiceMode ?
+          {voice: this.voice} :
+          {language: this.language, gender: this.gender};
         let audio = {
           format: this.format,
           pitch: this.pitch,
@@ -95,9 +97,12 @@
           ssml: this.ssml,
           text: this.text,
           ssmlMode: this.ssmlMode,
+          voiceMode: this.voiceMode,
           ...voice,
           ...audio,
         };
+        console.log(payload, voice);
+        
         
         this.$http.post(baseURI, payload)
         .then((result) => {
@@ -107,7 +112,9 @@
       synth() {
         // make POST request
         const baseURI = 'http://localhost:3000/synth';
-        let voice = this.voiceMode ? {voiceName: this.voiceName} : {language: this.language, gender: this.gender};
+        let voice = !!this.voiceMode ?
+          {voiceName: this.voiceName} :
+          {language: this.language, gender: this.gender};
         let audio = {
           format: this.format,
           pitch: this.pitch,
@@ -119,6 +126,7 @@
           ssml: this.ssml,
           text: this.text,
           ssmlMode: this.ssmlMode,
+          voiceMode: this.voiceMode,
           ...voice,
           ...audio,
         };
