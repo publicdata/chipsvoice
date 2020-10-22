@@ -89,8 +89,8 @@
         let audio = {
           format: this.format,
           pitch: this.pitch,
-          speed: this.speed,
-          volume: this.volume,
+          rate: this.speed,
+          gain: this.volume,
         };
         let payload = {
           outputFile: this.file,
@@ -116,8 +116,8 @@
         let audio = {
           format: this.format,
           pitch: this.pitch,
-          speed: this.speed,
-          volume: this.volume,
+          rate: this.speed,
+          gain: this.volume,
         };
         let payload = {
           outputFile: this.file,
