@@ -15,7 +15,9 @@
               v-select(label="Voice" v-model="voice" :items="voices")
               v-select( label="Language" v-model="language" :items="languages")
               v-select(label="Gender" v-model="gender" :items="genders")
-            v-btn(@click="speak") Speak
+            .actions
+              v-btn(@click="") Synth
+              v-btn(@click="speak") Speak
 </template>
 
 <script lang="ts">
@@ -87,7 +89,25 @@
         
         this.$http.post(baseURI, payload)
         .then((result) => {
-          this.users = result.data
+          console.log(result.data);
+        })
+      },
+      synth() {
+        // make POST request
+        const baseURI = 'http://localhost:3000/synth';
+        let input = this.ssmlMode ? {ssml: this.ssml} : {text: this.text};
+        let voice = this.voiceMode ? {voiceName: this.voiceName} : {language: this.language, gender: this.gender};
+        let audio = {};
+        let payload = {
+          outputFile: this.file,
+          ...input,
+          ...voice,
+          ...audio,
+        };
+        
+        this.$http.post(baseURI, payload)
+        .then((result) => {
+          console.log(result.data);
         })
       }
     }
@@ -95,6 +115,6 @@
 </script>
 
 <style lang="sass" scoped>
-.voice-options
+.voice-options, .actions
   display: flex
 </style>
