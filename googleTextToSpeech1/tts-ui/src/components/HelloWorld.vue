@@ -16,7 +16,7 @@
               v-select( label="Language" v-model="language" :items="languages")
               v-select(label="Gender" v-model="gender" :items="genders")
             .actions
-              v-btn(@click="") Synth
+              v-btn(@click="synth") Synth
               v-btn(@click="speak") Speak
 </template>
 
