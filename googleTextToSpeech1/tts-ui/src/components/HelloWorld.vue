@@ -7,6 +7,9 @@
           v-form()
             v-text-field(label="File" placeholder="new.ogg" v-model="file" required)
             v-select(label="Format" v-model="format" :items="formats")
+            v-slider(label="Pitch" v-model="pitch")
+            v-slider(label="Speed" v-model="speed")
+            v-slider(label="Volume" v-model="volume")
             v-switch(v-model="ssmlMode" label="SSML Mode")
             v-textarea(v-if="ssmlMode" label="SSML" v-model="ssml" required) 
             v-textarea(v-else label="Text" v-model="text" required) 
@@ -30,6 +33,9 @@
       file: "new.ogg",
       format: "OGG_OPUS",
       formats: ["OGG_OPUS", "MP3", "LINEAR16"],
+      pitch: "1.0",
+      speed: "1.0",
+      volume: "1.0",
       gender: "MALE",
       genders: ["MALE", "FEMALE", "NEUTRAL"],
       text: "Hello world",
@@ -78,7 +84,12 @@
         // make POST request
         const baseURI = 'http://localhost:3000/speak';
         let voice = this.voiceMode ? {voiceName: this.voiceName} : {language: this.language, gender: this.gender};
-        let audio = {};
+        let audio = {
+          format: this.format,
+          pitch: this.pitch,
+          speed: this.speed,
+          volume: this.volume,
+        };
         let payload = {
           outputFile: this.file,
           ssml: this.ssml,
@@ -97,7 +108,12 @@
         // make POST request
         const baseURI = 'http://localhost:3000/synth';
         let voice = this.voiceMode ? {voiceName: this.voiceName} : {language: this.language, gender: this.gender};
-        let audio = {};
+        let audio = {
+          format: this.format,
+          pitch: this.pitch,
+          speed: this.speed,
+          volume: this.volume,
+        };
         let payload = {
           outputFile: this.file,
           ssml: this.ssml,
