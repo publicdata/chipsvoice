@@ -39,26 +39,21 @@ app.post("/hook", (req, res) => {
 
 app.post("/synth", async (req, res) => {
   //console.log(req.body) // Call your action on the request here
-  var text = req.body.text;
-  var ssml = req.body.ssml;
-  var language = req.body.language;
-  var gender = req.body.gender;
-  var voiceName = req.body.voiceName;
-  var voice = {languageCode: language, name: voiceName, ssmlGender: gender};
-  var format = req.body.format ? req.body.format : 'MP3';
-  var rate = req.body.rate ? req.body.rate : 1.0;
-  var pitch = req.body.pitch ? req.body.pitch : 1.0;
-  var gain = req.body.gain ? req.body.gain : 3.0;
+  var voice = {
+    languageCode: req.body.language,
+    name: req.body.voiceName,
+    ssmlGender: req.body.gender
+  };
   var audioConfig = {
-    "audioEncoding": format,
-    "speakingRate": rate,
-    "pitch": pitch,
-    "volumeGainDb": gain,
+    "audioEncoding": req.body.format ? req.body.format : 'OGG_OPUS',
+    "speakingRate": req.body.rate ? req.body.rate : 1.0,
+    "pitch": req.body.pitch ? req.body.pitch : 1.0,
+    "volumeGainDb": req.body.gain ? req.body.gain : 3.0,
   };
   // TODO: text fallback on SSML error if both present
   var input;
-  if (!!ssml) input = {ssml: ssml};
-  else input = {text: text};
+  if (!!req.body.ssml) input = {ssml: req.body.ssml};
+  else input = {text: req.body.text};
   // generate audio
   var outputFile = req.body.outputFile ? req.body.outputFile : 'output.mp3';
   await audio(input, voice, audioConfig, outputFile);
@@ -66,26 +61,21 @@ app.post("/synth", async (req, res) => {
 
 app.post("/speak", async (req, res) => {
   //console.log(req.body) // Call your action on the request here
-  var text = req.body.text;
-  var ssml = req.body.ssml;
-  var language = req.body.language;
-  var gender = req.body.gender;
-  var voiceName = req.body.voiceName;
-  var voice = {languageCode: language, name: voiceName, ssmlGender: gender};
-  var format = req.body.format ? req.body.format : 'MP3';
-  var rate = req.body.rate ? req.body.rate : 1.0;
-  var pitch = req.body.pitch ? req.body.pitch : 1.0;
-  var gain = req.body.gain ? req.body.gain : 3.0;
+  var voice = {
+    languageCode: req.body.language,
+    name: req.body.voiceName,
+    ssmlGender: req.body.gender
+  };
   var audioConfig = {
-    "audioEncoding": format,
-    "speakingRate": rate,
-    "pitch": pitch,
-    "volumeGainDb": gain,
+    "audioEncoding": req.body.format ? req.body.format : 'OGG_OPUS',
+    "speakingRate": req.body.rate ? req.body.rate : 1.0,
+    "pitch": req.body.pitch ? req.body.pitch : 1.0,
+    "volumeGainDb": req.body.gain ? req.body.gain : 3.0,
   };
   // TODO: text fallback on SSML error if both present
   var input;
-  if (!!ssml) input = {ssml: ssml};
-  else input = {text: text};
+  if (!!req.body.ssml) input = {ssml: req.body.ssml};
+  else input = {text: req.body.text};
   // generate audio
   var outputFile = req.body.outputFile ? req.body.outputFile : 'output.mp3';
   await audio(input, voice, audioConfig, outputFile);
@@ -131,7 +121,7 @@ function playFile(file) {
 }
 
 async function synth() {
-  
+
 }
 
 async function audio(input, voice, audioConfig, outputFile) {
