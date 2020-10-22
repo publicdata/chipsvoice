@@ -89,34 +89,13 @@ app.post("/speak", async (req, res) => {
   // generate audio
   var outputFile = req.body.outputFile ? req.body.outputFile : 'output.mp3';
   await audio(input, voice, audioConfig, outputFile);
-  const vlc = exec(`vlc --one-instance ${outputFile}`);
-  vlc.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
-  });
-
-  vlc.stderr.on('data', (data) => {
-    console.error(`stderr: ${data}`);
-  });
-
-  vlc.on('close', (code) => {
-    console.log(`child process exited with code ${code}`);
-  });
+  playFile(outputFile);
   res.status(200).end() // Responding is important
 })
 
 app.post("/play", async (req, res) => {
-  //console.log(req.body) // Call your action on the request here
   var file = req.body.file;
-  const vlc = exec(`vlc --one-instance ${file}`);
-  vlc.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
-  });
-  vlc.stderr.on('data', (data) => {
-    console.error(`stderr: ${data}`);
-  });
-  vlc.on('close', (code) => {
-    console.log(`child process exited with code ${code}`);
-  });
+  playFile(file);
   res.status(200).end() // Responding is important
 })
 
@@ -136,6 +115,24 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+function playFile(file) {
+  //console.log(req.body) // Call your action on the request here
+  const vlc = exec(`vlc --one-instance ${file}`);
+  vlc.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+  });
+  vlc.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+  });
+  vlc.on('close', (code) => {
+    console.log(`child process exited with code ${code}`);
+  });
+}
+
+async function synth() {
+  
+}
 
 async function audio(input, voice, audioConfig, outputFile) {
   const request = {
