@@ -7,9 +7,9 @@
           v-form()
             v-text-field(label="File" placeholder="new.ogg" v-model="file" required)
             v-select(label="Format" v-model="format" :items="formats")
-            v-slider(label="Pitch" v-model="pitch")
-            v-slider(label="Speed" v-model="speed")
-            v-slider(label="Volume" v-model="volume")
+            v-slider(label="Pitch" min="-20" max="20" step="1" v-model="pitch")
+            v-slider(label="Speed" min="0.25" max="4.0" step="0.05" v-model="speed")
+            v-slider(label="Volume" min="-96" max="16" step="0.5" v-model="volume")
             v-switch(v-model="ssmlMode" label="SSML Mode")
             v-textarea(v-if="ssmlMode" label="SSML" v-model="ssml" required) 
             v-textarea(v-else label="Text" v-model="text" required) 
@@ -101,9 +101,7 @@
           ...voice,
           ...audio,
         };
-        console.log(payload, voice);
-        
-        
+
         this.$http.post(baseURI, payload)
         .then((result) => {
           console.log(result.data);
