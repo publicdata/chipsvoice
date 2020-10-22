@@ -3,11 +3,11 @@
     v-row
       v-col
         div
-          h1 Hello World!
-          v-form(action="http://localhost:3000/speak" method="POST")
-            v-text-field(label="File" id="outputFile" required)
-            v-textarea(label="Message" id="ssml" required) 
-            v-btn(type="submit") Speak
+          h1 Text To Speach
+          v-form()
+            v-text-field(label="File" v-model="file")
+            v-textarea(label="Message" v-model="text" required) 
+            v-btn(@click="speak") Speak
 </template>
 
 <script lang="ts">
@@ -17,56 +17,22 @@
     name: 'HelloWorld',
 
     data: () => ({
-      ecosystem: [
-        {
-          text: 'vuetify-loader',
-          href: 'https://github.com/vuetifyjs/vuetify-loader',
-        },
-        {
-          text: 'github',
-          href: 'https://github.com/vuetifyjs/vuetify',
-        },
-        {
-          text: 'awesome-vuetify',
-          href: 'https://github.com/vuetifyjs/awesome-vuetify',
-        },
-      ],
-      importantLinks: [
-        {
-          text: 'Documentation',
-          href: 'https://vuetifyjs.com',
-        },
-        {
-          text: 'Chat',
-          href: 'https://community.vuetifyjs.com',
-        },
-        {
-          text: 'Made with Vuetify',
-          href: 'https://madewithvuejs.com/vuetify',
-        },
-        {
-          text: 'Twitter',
-          href: 'https://twitter.com/vuetifyjs',
-        },
-        {
-          text: 'Articles',
-          href: 'https://medium.com/vuetify',
-        },
-      ],
-      whatsNext: [
-        {
-          text: 'Explore components',
-          href: 'https://vuetifyjs.com/components/api-explorer',
-        },
-        {
-          text: 'Select a layout',
-          href: 'https://vuetifyjs.com/getting-started/pre-made-layouts',
-        },
-        {
-          text: 'Frequently Asked Questions',
-          href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
-        },
-      ],
+      file: "",
+      text: "",
     }),
+
+    methods: {
+      speak() {
+        // make POST request
+        const baseURI = 'http://localhost:3000/speak'
+        this.$http.post(baseURI, {
+          outputFile: this.file,
+          text: this.text,
+        })
+        .then((result) => {
+          this.users = result.data
+        })
+      }
+    }
   })
 </script>
