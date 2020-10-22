@@ -54,7 +54,7 @@ app.post("/synth", async (req, res) => {
   };
   // TODO: text fallback on SSML error if both present
   var input;
-  if (!!req.body.ssml) input = {ssml: req.body.ssml};
+  if (!!req.body.ssmlMode) input = {ssml: req.body.ssml};
   else input = {text: req.body.text};
   // generate audio
   var outputFile = req.body.outputFile ? req.body.outputFile : 'output.mp3';

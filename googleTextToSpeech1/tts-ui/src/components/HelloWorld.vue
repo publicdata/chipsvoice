@@ -16,7 +16,7 @@
               v-select( label="Language" v-model="language" :items="languages")
               v-select(label="Gender" v-model="gender" :items="genders")
             .actions
-              v-btn(@click="") Synth
+              v-btn(@click="synth") Synth
               v-btn(@click="speak") Speak
 </template>
 
@@ -95,12 +95,13 @@
       synth() {
         // make POST request
         const baseURI = 'http://localhost:3000/synth';
-        let input = this.ssmlMode ? {ssml: this.ssml} : {text: this.text};
         let voice = this.voiceMode ? {voiceName: this.voiceName} : {language: this.language, gender: this.gender};
         let audio = {};
         let payload = {
           outputFile: this.file,
-          ...input,
+          ssml: this.ssml,
+          text: this.text,
+          ssmlMode: this.ssmlMode,
           ...voice,
           ...audio,
         };
