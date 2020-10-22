@@ -4,6 +4,10 @@
       v-col
         div
           h1 Hello World!
+          v-form(action="http://localhost:3000/speak" method="POST")
+            v-text-field(label="File" id="outputFile" required)
+            v-textarea(label="Message" id="ssml" required) 
+            v-btn(type="submit") Speak
 </template>
 
 <script lang="ts">
