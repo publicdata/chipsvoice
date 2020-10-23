@@ -7,3 +7,5 @@ ccrn-site-ede8a5074d2e.json
 tts-creds.json
 *.mp3
 *.ogg
+package-lock.json.*
+package.json.*
