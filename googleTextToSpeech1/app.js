@@ -116,7 +116,7 @@ app.use(function(err, req, res, next) {
 
 function playFile(file) {
   //console.log(req.body) // Call your action on the request here
-  fadeIn();
+  fadeOut();
   const vlc = exec(`vlc --one-instance ${file}`);
   vlc.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
@@ -126,7 +126,7 @@ function playFile(file) {
   });
   vlc.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
-    fadeIn();
+    setTimeout(fadeIn, 2000);
   });
 }
 
@@ -141,7 +141,7 @@ function fadeOut() {
 function fadeIn() {
   output.send('cc', {
       controller: 0,
-      value: 100,
+      value: 110,
       channel: 3
     });
 }
