@@ -6,10 +6,6 @@
           h1 Text To Speach
           v-form()
             v-text-field(label="File" placeholder="new.ogg" v-model="file" required)
-            v-select(label="Format" v-model="format" :items="formats")
-            v-slider(label="Pitch" min="-20" max="20" step="1" v-model="pitch" thumb-label)
-            v-slider(label="Speed" min="0.25" max="4.0" step="0.05" v-model="speed" thumb-label)
-            v-slider(label="Volume" min="-96" max="16" step="0.5" v-model="volume" thumb-label)
             v-switch(v-model="ssmlMode" label="SSML Mode")
             v-textarea(v-if="ssmlMode" label="SSML" v-model="ssml" required) 
             v-textarea(v-else label="Text" v-model="text" required) 
@@ -18,6 +14,10 @@
               v-select(label="Voice" v-model="voice" :items="voices")
               v-select( label="Language" v-model="language" :items="languages")
               v-select(label="Gender" v-model="gender" :items="genders")
+            v-select(label="Format" v-model="format" :items="formats")
+            v-slider(label="Pitch" min="-20" max="20" step="1" v-model="pitch" thumb-label)
+            v-slider(label="Speed" min="0.25" max="4.0" step="0.05" v-model="speed" thumb-label)
+            v-slider(label="Volume" min="-96" max="16" step="0.5" v-model="volume" thumb-label)
             .actions
               v-btn(@click="synth") Synth
               v-btn(@click="speak") Speak
