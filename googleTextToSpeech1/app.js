@@ -140,6 +140,23 @@ function playFile(file) {
   });
 }
 
+function fadeTo(level) {
+  var diff = level - volume;
+  var counter = 0;
+  var fadeDelay = 10;
+  var interval = setInterval(() => {
+    volume += (diff % 1)
+    output.send('cc', {
+      controller: 0,
+      value: volume,
+      channel: 3
+    });
+    counter++;
+    if (counter === Math.abs(diff)) clearInterval(interval);
+  }, fadeDelay);
+  
+}
+
 function fadeOut() {
   output.send('cc', {
     controller: 0,
@@ -154,6 +171,14 @@ function fadeIn() {
       value: 110,
       channel: 3
     });
+}
+
+function mute() {
+  output.send('cc', {
+    controller: 0,
+    value: 1,
+    channel: 4
+  });
 }
 
 async function synth() {
