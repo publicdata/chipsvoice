@@ -31,6 +31,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var volume = 0;
+var unity = 102;
 
 var app = express()
 
@@ -154,23 +155,14 @@ function fadeTo(level) {
     counter++;
     if (counter === Math.abs(diff)) clearInterval(interval);
   }, fadeDelay);
-  
 }
 
 function fadeOut() {
-  output.send('cc', {
-    controller: 0,
-    value: 0,
-    channel: 3
-  });
+  fadeTo(0);
 }
 
 function fadeIn() {
-  output.send('cc', {
-      controller: 0,
-      value: 110,
-      channel: 3
-    });
+  fadeTo(unity);
 }
 
 function mute() {
