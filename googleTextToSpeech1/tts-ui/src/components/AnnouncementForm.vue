@@ -21,7 +21,8 @@
           v-card-actions
             v-spacer
             v-btn(@click="synth") Save
-            v-btn(@click="speak") Speak
+            v-btn(@click="speak") Speak Now
+            v-btn(@click="") Schedule
 </template>
 
 <script lang="ts">
