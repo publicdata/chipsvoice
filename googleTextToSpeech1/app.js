@@ -8,8 +8,16 @@ const { spawn, exec } = require('child_process');
 
 // setup MIDI interface
 var easymidi = require('easymidi');
-//console.log(easymidi.getOutputs());
-var output = new easymidi.Output('loopMIDI Port 1');
+var midiOutputName = 'loopMIDI Port 1';
+var output;
+var devices = easymidi.getOutputs();
+console.log(devices);
+try {
+  output = new easymidi.Output(midiOutputName);
+} catch (err) {
+  console.log(`Selected default midi (last in list): ${devices[-1]}`)
+  output = new easymidi.Output(devices[-1]);
+}
 
 // Imports Google Cloud client library for TTS
 const textToSpeech = require('@google-cloud/text-to-speech');
@@ -21,6 +29,8 @@ const client = new textToSpeech.TextToSpeechClient();
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+
+var volume = 0;
 
 var app = express()
 
@@ -116,8 +126,7 @@ app.use(function(err, req, res, next) {
 
 function playFile(file) {
   //console.log(req.body) // Call your action on the request here
-  var len = 2000;
-  mute();
+  fadeOut();
   const vlc = exec(`vlc --one-instance ${file}`);
   vlc.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
@@ -127,16 +136,24 @@ function playFile(file) {
   });
   vlc.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
-    setTimeout(mute, len);
+    setTimeout(fadeIn, 2000);
   });
 }
 
-function mute() {
+function fadeOut() {
   output.send('cc', {
     controller: 0,
-    value: 1,
+    value: 0,
     channel: 3
   });
+}
+
+function fadeIn() {
+  output.send('cc', {
+      controller: 0,
+      value: 110,
+      channel: 3
+    });
 }
 
 async function synth() {

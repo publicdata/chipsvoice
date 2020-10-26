@@ -2,9 +2,9 @@
   v-container
     v-row
       v-col
-        div
-          h1 Text To Speach
-          v-form()
+        v-card
+          v-card-title New Announcement
+          v-card-text
             v-text-field(label="File" placeholder="new.ogg" v-model="file" required)
             v-switch(v-model="ssmlMode" label="SSML Mode")
             v-textarea(v-if="ssmlMode" label="SSML" v-model="ssml" required) 
@@ -18,16 +18,17 @@
             v-slider(label="Pitch" min="-20" max="20" step="1" v-model="pitch" thumb-label)
             v-slider(label="Speed" min="0.25" max="4.0" step="0.05" v-model="speed" thumb-label)
             v-slider(label="Volume" min="-96" max="16" step="0.5" v-model="volume" thumb-label)
-            .actions
-              v-btn(@click="synth") Synth
-              v-btn(@click="speak") Speak
+          v-card-actions
+            v-spacer
+            v-btn(@click="synth") Save
+            v-btn(@click="speak") Speak
 </template>
 
 <script lang="ts">
   import Vue from 'vue'
 
   export default Vue.extend({
-    name: 'HelloWorld',
+    name: 'AnnouncementForm',
 
     data: () => ({
       file: "new.ogg",
