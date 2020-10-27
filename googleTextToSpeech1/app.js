@@ -31,7 +31,7 @@ const client = new textToSpeech.TextToSpeechClient();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-var unity = 102;
+var unity = 50;
 var volume = unity;
 
 var app = express()
@@ -53,6 +53,11 @@ app.use('/users', usersRouter);
 
 app.post("/hook", (req, res) => {
   console.log(req.body) // Call your action on the request here
+  res.status(200).end() // Responding is important
+})
+
+app.get("/midi", (req, res) => {
+  sendMidi(0, 1, 4);
   res.status(200).end() // Responding is important
 })
 
@@ -156,7 +161,7 @@ function playFile(file) {
 async function fadeTo(level) {
   var diff = level - volume;
   var fadeDelay = 10;
-  for (var i=0; i<Math.abs(diff); i++) {
+  for (var i=0; i<10; i++) {
     await sleep(fadeDelay);
     if (diff > 0) volume++
     else volume--
@@ -182,6 +187,14 @@ function mute() {
     controller: 0,
     value: 1,
     channel: 4
+  });
+}
+
+function sendMidi(controller, value, channel) {
+  output.send('cc', {
+    controller: controller,
+    value: value,
+    channel: channel
   });
 }
 
