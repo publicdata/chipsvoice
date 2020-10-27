@@ -57,7 +57,11 @@ app.post("/hook", (req, res) => {
 })
 
 app.get("/midi", (req, res) => {
-  sendMidi(0, 1, 4);
+  output.send('cc', {
+    controller: 0,
+    value: 1,
+    channel: 3,
+  });
   res.status(200).end() // Responding is important
 })
 
@@ -187,14 +191,6 @@ function mute() {
     controller: 0,
     value: 1,
     channel: 4
-  });
-}
-
-function sendMidi(controller, value, channel) {
-  output.send('cc', {
-    controller: controller,
-    value: value,
-    channel: channel
   });
 }
 
