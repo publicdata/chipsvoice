@@ -1,17 +1,23 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+const fs = require('fs');
 var cookieParser = require('cookie-parser');
 var cors = require('cors')
 var logger = require('morgan');
 const { spawn, exec } = require('child_process');
+const { promisify } = require('util')
+// Imports Google Cloud client library for TTS
+const textToSpeech = require('@google-cloud/text-to-speech');
+
+const sleep = promisify(setTimeout);
 
 // setup MIDI interface
 var easymidi = require('easymidi');
 var midiOutputName = 'loopMIDI Port 1';
 var output;
 var devices = easymidi.getOutputs();
-console.log(devices);
+//console.log(devices);
 try {
   output = new easymidi.Output(midiOutputName);
 } catch (err) {
@@ -19,11 +25,6 @@ try {
   output = new easymidi.Output(devices[-1]);
 }
 
-// Imports Google Cloud client library for TTS
-const textToSpeech = require('@google-cloud/text-to-speech');
-// Import other required libraries
-const fs = require('fs');
-const util = require('util');
 // Creates a client
 const client = new textToSpeech.TextToSpeechClient();
 
@@ -52,6 +53,16 @@ app.use('/users', usersRouter);
 
 app.post("/hook", (req, res) => {
   console.log(req.body) // Call your action on the request here
+  res.status(200).end() // Responding is important
+})
+
+app.post("/learnmute", (req, res) => {
+  learnMute();
+  res.status(200).end() // Responding is important
+})
+
+app.post("/learnfade", (req, res) => {
+  learnFade();
   res.status(200).end() // Responding is important
 })
 
@@ -141,20 +152,18 @@ function playFile(file) {
   });
 }
 
-function fadeTo(level) {
+async function fadeTo(level) {
   var diff = level - volume;
-  var counter = 0;
   var fadeDelay = 10;
-  var interval = setInterval(() => {
+  for (let i=0; i++; i<Math.abs(diff)) {
+    await sleep(fadeDelay);
+  }
     volume += (diff % 1)
     output.send('cc', {
       controller: 0,
       value: volume,
       channel: 3
     });
-    counter++;
-    if (counter === Math.abs(diff)) clearInterval(interval);
-  }, fadeDelay);
 }
 
 function fadeOut() {
@@ -173,6 +182,22 @@ function mute() {
   });
 }
 
+function learnMute() {
+  output.send('cc', {
+    controller: 0,
+    value: 1,
+    channel: 4
+  });
+}
+
+function learnFade() {
+  output.send('cc', {
+    controller: 0,
+    value: 1,
+    channel: 3
+  });
+}
+
 async function synth() {
 
 }
@@ -185,7 +210,7 @@ async function audio(input, voice, audioConfig, outputFile) {
   };
 
   const [response] = await client.synthesizeSpeech(request);
-  const writeFile = util.promisify(fs.writeFile);
+  const writeFile = promisify(fs.writeFile);
   await writeFile(outputFile, response.audioContent, 'binary');
   console.log(`Audio content written to file: ${outputFile}`);
 }
