@@ -31,8 +31,8 @@ const client = new textToSpeech.TextToSpeechClient();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-var volume = 0;
 var unity = 102;
+var volume = unity;
 
 var app = express()
 
@@ -89,7 +89,7 @@ app.post("/synth", async (req, res) => {
 })
 
 app.post("/speak", async (req, res) => {
-  console.log(req.body) // Call your action on the request here
+  //console.log(req.body) // Call your action on the request here
   var voice = {
     languageCode: req.body.language ? req.body.language : 'en-US',
     name: req.body.voiceMode ? req.body.voice : (!req.body.language || !req.body.gender) ? "en-US-Wavenet-A" : "",
@@ -138,6 +138,7 @@ app.use(function(err, req, res, next) {
 
 function playFile(file) {
   //console.log(req.body) // Call your action on the request here
+  var duration = 2000; // time between fades in milliseconds
   fadeOut();
   const vlc = exec(`vlc --one-instance ${file}`);
   vlc.stdout.on('data', (data) => {
@@ -148,22 +149,24 @@ function playFile(file) {
   });
   vlc.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
-    setTimeout(fadeIn, 2000);
+    setTimeout(fadeIn, duration);
   });
 }
 
 async function fadeTo(level) {
   var diff = level - volume;
   var fadeDelay = 10;
-  for (let i=0; i++; i<Math.abs(diff)) {
+  for (var i=0; i<Math.abs(diff); i++) {
     await sleep(fadeDelay);
-  }
-    volume += (diff % 1)
+    if (diff > 0) volume++
+    else volume--
+    console.log(volume);
     output.send('cc', {
       controller: 0,
       value: volume,
       channel: 3
     });
+  }
 }
 
 function fadeOut() {
@@ -193,7 +196,12 @@ function learnMute() {
 function learnFade() {
   output.send('cc', {
     controller: 0,
-    value: 1,
+    value: unity-1,
+    channel: 3
+  })
+  output.send('cc', {
+    controller: 0,
+    value: unity,
     channel: 3
   });
 }
