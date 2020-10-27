@@ -56,12 +56,12 @@ app.post("/hook", (req, res) => {
   res.status(200).end() // Responding is important
 })
 
-app.post("/learnmute", (req, res) => {
+app.get("/learnmute", (req, res) => {
   learnMute();
   res.status(200).end() // Responding is important
 })
 
-app.post("/learnfade", (req, res) => {
+app.get("/learnfade", (req, res) => {
   learnFade();
   res.status(200).end() // Responding is important
 })
